@@ -23,13 +23,14 @@ class GameWindow < Gosu::Window
     @obstacles = []      # Obstacles array
     @obstacle_speed = 5  # Speed of obstacles
 # Texts/fonts, music
-    @font = Gosu::Font.new(32)
-    @game_name_font = Gosu::Font.new(self, "upheaval/upheavtt.ttf", 48)
+    @font = Gosu::Font.new(self, "fonts/RetroGaming.ttf", 32)
+    @game_name_font = Gosu::Font.new(self, "fonts/upheavtt.ttf", 48)
+    @menu_font = Gosu::Font.new(self, "fonts/RetroGaming.ttf", 48)
     @background_music = Gosu::Song.new("background_music.mp3")  # BG music
     @collision_sound = Gosu::Sample.new("fail.mp3")  # Bruh sound when player collids
     @background_music.play(true)  # Loops background music
 # Menu setup
-    @menu_font = Gosu::Font.new(48)
+    #@menu_font = Gosu::Font.new(48)
     @menu_items = ['Play Game', 'High Scores', 'Exit']
     @selected_item = 0
 # Flag controlling game state 
@@ -96,7 +97,7 @@ class GameWindow < Gosu::Window
 
 # Write level on top right
   def draw_level
-    @font.draw_text("Level: #{@level}", WIDTH - 120, 20, 1, 1, 1, Gosu::Color::WHITE)
+    @font.draw_text("Level: #{@level}", 670, 20, 1, 1, 1, Gosu::Color::WHITE)
   end
 
 
@@ -262,6 +263,7 @@ class GameWindow < Gosu::Window
   def handle_game_over_input
     start_game if Gosu.button_down?(Gosu::KB_RETURN)
     close if Gosu.button_down?(Gosu::KB_ESCAPE)
+    main_menu if Gosu.button_down?(Gosu::KB_M)
   end
 
 def handle_highscore_input
@@ -272,16 +274,19 @@ end
 
 # Draw Game Over Menu 
   def draw_game_over
-    game_over_text = "Game Over"
+    game_over_text = "Game Over!"
     final_score_text = "Your Score: #{@score}"
-    instructions = "Press Enter to Play Again or Esc to Exit"
+    instructions = "Press Enter to Play Again"
+    main_menu_text = "Press M to Return to Main Menu"
+
   
     menu_x = WIDTH / 2 - 150
     menu_y = HEIGHT / 2 - 50
   
     @game_name_font.draw_text(game_over_text, (WIDTH - @game_name_font.text_width(game_over_text)) / 2, menu_y - 60, 1, 1, 1, Gosu::Color::RED)
     @menu_font.draw_text(final_score_text, (WIDTH - @menu_font.text_width(final_score_text)) / 2, menu_y, 1, 1, 1, Gosu::Color::WHITE)
-    @menu_font.draw_text(instructions, (WIDTH - @menu_font.text_width(instructions) * 0.5) / 2, menu_y + 100, 1, 0.5, 0.5, Gosu::Color::GRAY)
+    @menu_font.draw_text(instructions, (WIDTH - @menu_font.text_width(instructions) * 0.65) / 2, menu_y + 65, 1, 0.65, 0.65, Gosu::Color::GRAY)
+    @menu_font.draw_text(main_menu_text, (WIDTH - @menu_font.text_width(main_menu_text) * 0.65) / 2, menu_y + 95, 1, 0.65, 0.65, Gosu::Color::GRAY)
   end
 
   def draw_high_score
@@ -292,7 +297,7 @@ end
     menu_y = HEIGHT / 2 - 50
   
     @game_name_font.draw_text(high_score_title, (WIDTH - @game_name_font.text_width(high_score_title)) / 2, menu_y - 150, 1, 1, 1, Gosu::Color::RED)
-    @menu_font.draw_text(instructions, (WIDTH - @menu_font.text_width(instructions) * 0.5) / 2, menu_y + 250, 1, 0.5, 0.5, Gosu::Color::GRAY)
+    @menu_font.draw_text(instructions, (WIDTH - @menu_font.text_width(instructions) * 0.65) / 2, menu_y + 300, 1, 0.65, 0.65, Gosu::Color::GRAY)
   
     # Draw high scores
     menu_y -= 130 
@@ -300,7 +305,8 @@ end
     while index < 10
     score= @high_scores[index]
     menu_y += 35
-      @menu_font.draw_text("#{index + 1}. #{score}", menu_x, menu_y, 0.70, 0.70, 0.70, Gosu::Color::WHITE)
+      score_text = "#{index + 1}. #{score}"
+      @menu_font.draw_text(score_text, (WIDTH - @menu_font.text_width(score_text) * 0.7) / 2, menu_y, 0.70, 0.70, 0.70, Gosu::Color::WHITE)
     index += 1
     end
   end
