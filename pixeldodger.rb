@@ -17,7 +17,6 @@ class GameWindow < Gosu::Window
 # Game related stuff
     @character_x = WIDTH / 2 - CHARACTER_SIZE / 2       # Character's X
     @character_y = HEIGHT - CHARACTER_SIZE - TILE_SIZE  # Character's Y
-    @moving = false                                     # moving state
     @score = 0           # Initial Score  
     @level = 1           # Initial Level
     @obstacles = []      # Obstacles array
