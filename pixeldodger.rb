@@ -33,6 +33,8 @@ class GameWindow < Gosu::Window
     #@menu_font = Gosu::Font.new(48)
     @menu_items = ['Play Game', 'High Scores', 'Exit']
     @selected_item = 0
+    @menu_change_cooldown = 350 # 350 milliseconds = 0.35s
+    @last_menu_change_time = 0
 # Flag controlling game state 
     @in_menu = true
     @game_over = false
@@ -147,10 +149,14 @@ class GameWindow < Gosu::Window
 # Arrow up and down, select items/menu
 # Return = select
   def handle_menu_input
-    if Gosu.button_down?(Gosu::KB_DOWN)
+    current_time = Gosu.milliseconds
+
+    if Gosu.button_down?(Gosu::KB_DOWN) && current_time - @last_menu_change_time >= @menu_change_cooldown
       @selected_item = (@selected_item + 1) % @menu_items.length
-    elsif Gosu.button_down?(Gosu::KB_UP)
+      @last_menu_change_time = current_time
+    elsif Gosu.button_down?(Gosu::KB_UP) && current_time - @last_menu_change_time >= @menu_change_cooldown
       @selected_item = (@selected_item - 1) % @menu_items.length  
+      @last_menu_change_time = current_time
     elsif Gosu.button_down?(Gosu::KB_RETURN)
       handle_menu_selection
     end
@@ -267,7 +273,7 @@ class GameWindow < Gosu::Window
   end
 
 def handle_highscore_input
-  main_menu if Gosu.button_down?(Gosu::KB_RETURN)
+  main_menu if Gosu.button_down?(Gosu::KB_BACKSPACE)
 end 
 
 
@@ -291,7 +297,7 @@ end
 
   def draw_high_score
     high_score_title = "High Scores"
-    instructions = "Press Enter to Return to Main Menu"
+    instructions = "Press Backspace to Return to Main Menu"
   
     menu_x = WIDTH / 2 - 150
     menu_y = HEIGHT / 2 - 50
