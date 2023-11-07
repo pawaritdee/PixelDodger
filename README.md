@@ -62,7 +62,8 @@ Pixel Dodger keeps track of your high scores. You can view the top 10 high score
 
 ## Contributing
 We welcome contributions from the open-source community. If you'd like to improve this game, fix bugs, or add new features, please create a pull request. Feel free to discuss your ideas and report issues in the Issues section.
-License
+
+## License
 This project is licensed under the MIT License. You are free to use, modify, and distribute this project in accordance with the license terms.
 
 Enjoy playing Pixel Dodger!
