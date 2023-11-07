@@ -279,7 +279,7 @@ end
     menu_x = WIDTH / 2 - 150
     menu_y = HEIGHT / 2 - 50
   
-    @game_name_font.draw_text(game_over_text, (WIDTH - @menu_font.text_width(game_over_text)) / 2, menu_y - 60, 1, 1, 1, Gosu::Color::RED)
+    @game_name_font.draw_text(game_over_text, (WIDTH - @game_name_font.text_width(game_over_text)) / 2, menu_y - 60, 1, 1, 1, Gosu::Color::RED)
     @menu_font.draw_text(final_score_text, (WIDTH - @menu_font.text_width(final_score_text)) / 2, menu_y, 1, 1, 1, Gosu::Color::WHITE)
     @menu_font.draw_text(instructions, (WIDTH - @menu_font.text_width(instructions) * 0.5) / 2, menu_y + 100, 1, 0.5, 0.5, Gosu::Color::GRAY)
   end
@@ -291,7 +291,7 @@ end
     menu_x = WIDTH / 2 - 150
     menu_y = HEIGHT / 2 - 50
   
-    @game_name_font.draw_text(high_score_title, (WIDTH - @menu_font.text_width(high_score_title)) / 2, menu_y - 150, 1, 1, 1, Gosu::Color::RED)
+    @game_name_font.draw_text(high_score_title, (WIDTH - @game_name_font.text_width(high_score_title)) / 2, menu_y - 150, 1, 1, 1, Gosu::Color::RED)
     @menu_font.draw_text(instructions, (WIDTH - @menu_font.text_width(instructions) * 0.5) / 2, menu_y + 250, 1, 0.5, 0.5, Gosu::Color::GRAY)
   
     # Draw high scores
