@@ -2,7 +2,7 @@ require 'gosu'
 
 # Main Window
 class GameWindow < Gosu::Window
-  # Constants and Game Settings
+  # Constants and Game Settings - Adjustable 
   WIDTH = 800 
   HEIGHT = 600
   TILE_SIZE = 50
@@ -30,11 +30,14 @@ class GameWindow < Gosu::Window
     @background_music.play(true)  # Loops background music
 # Menu setup
     @menu_font = Gosu::Font.new(48)
-    @menu_items = ['Play Game', 'Exit']
+    @menu_items = ['Play Game', 'High Scores', 'Exit']
     @selected_item = 0
 # Flag controlling game state 
     @in_menu = true
     @game_over = false
+    @high_score_menu = false
+# Load high scores 
+    load_high_scores
   end
 
 
@@ -44,6 +47,8 @@ class GameWindow < Gosu::Window
       handle_menu_input
     elsif @game_over
       handle_game_over_input
+    elsif @high_score_menu
+      handle_highscore_input
     else
       handle_gameplay_input
     end
@@ -55,6 +60,8 @@ class GameWindow < Gosu::Window
       draw_menu
     elsif @game_over
       draw_game_over
+    elsif @high_score_menu
+      draw_high_score
     else
       draw_character
       draw_obstacles
@@ -68,8 +75,7 @@ class GameWindow < Gosu::Window
   def button_down(id)
     close if id == Gosu::KB_ESCAPE
   end
-
-  private
+  
 
 # Character drawing - Green Sqaure
   def draw_character
@@ -158,7 +164,7 @@ class GameWindow < Gosu::Window
     
     # Write navigation instructions
     instruction = "Use Arrow Up and Down to Navigate, and Use Enter to Select"
-    @menu_font.draw_text(instruction, (WIDTH - @menu_font.text_width(instruction) * 0.5) / 2, menu_y + 130, 1, 0.5, 0.5, Gosu::Color::GRAY)
+    @menu_font.draw_text(instruction, (WIDTH - @menu_font.text_width(instruction) * 0.5) / 2, menu_y + 200, 1, 0.5, 0.5, Gosu::Color::GRAY)
   
     # Write Play Again and Exit.
     # If index = selected item (from navigation), then color is yellow (selected), the other text is white (unselected)
@@ -174,6 +180,8 @@ class GameWindow < Gosu::Window
     when 0
       start_game
     when 1
+      high_score
+    when 2
       close
     end
   end
@@ -190,6 +198,18 @@ class GameWindow < Gosu::Window
     @obstacle_speed = 5   # obstacle speed = 5
     @game_over = false    # Not gameover state
     @background_music.play(true)  # Restart the background music
+  end
+
+  def high_score
+    @in_menu = false      # not in menu anymore
+    @game_over = false 
+    @high_score_menu = true
+  end
+
+  def main_menu
+    @in_menu = true
+    @game_over = false
+    @high_score_menu = false
   end
 
 ## Check each obstacles if they've collided by iterating and running collision function
@@ -220,6 +240,11 @@ class GameWindow < Gosu::Window
 # Gameover 
   def reset_game
     @game_over = true
+    save_high_scores if new_high_score?  # Check if the current score is a new high score
+  end
+  
+  def new_high_score?
+    @high_scores.size < 10 || @score > @high_scores.last
   end
 
 # Conditions when player gets to next level 
@@ -231,11 +256,18 @@ class GameWindow < Gosu::Window
 
 
 
+
+
 # EASY GAME OVER INPUT WHEN IN GAME OVER STATE
   def handle_game_over_input
     start_game if Gosu.button_down?(Gosu::KB_RETURN)
     close if Gosu.button_down?(Gosu::KB_ESCAPE)
   end
+
+def handle_highscore_input
+  main_menu if Gosu.button_down?(Gosu::KB_RETURN)
+end 
+
 
 
 # Draw Game Over Menu 
@@ -247,11 +279,57 @@ class GameWindow < Gosu::Window
     menu_x = WIDTH / 2 - 150
     menu_y = HEIGHT / 2 - 50
   
-    @menu_font.draw_text(game_over_text, (WIDTH - @menu_font.text_width(game_over_text)) / 2, menu_y - 60, 1, 1, 1, Gosu::Color::RED)
+    @game_name_font.draw_text(game_over_text, (WIDTH - @menu_font.text_width(game_over_text)) / 2, menu_y - 60, 1, 1, 1, Gosu::Color::RED)
     @menu_font.draw_text(final_score_text, (WIDTH - @menu_font.text_width(final_score_text)) / 2, menu_y, 1, 1, 1, Gosu::Color::WHITE)
     @menu_font.draw_text(instructions, (WIDTH - @menu_font.text_width(instructions) * 0.5) / 2, menu_y + 100, 1, 0.5, 0.5, Gosu::Color::GRAY)
   end
-end
+
+  def draw_high_score
+    high_score_title = "High Scores"
+    instructions = "Press Enter to Return to Main Menu"
+  
+    menu_x = WIDTH / 2 - 150
+    menu_y = HEIGHT / 2 - 50
+  
+    @game_name_font.draw_text(high_score_title, (WIDTH - @menu_font.text_width(high_score_title)) / 2, menu_y - 150, 1, 1, 1, Gosu::Color::RED)
+    @menu_font.draw_text(instructions, (WIDTH - @menu_font.text_width(instructions) * 0.5) / 2, menu_y + 250, 1, 0.5, 0.5, Gosu::Color::GRAY)
+  
+    # Draw high scores
+    menu_y -= 130 
+    index = 0
+    while index < 10
+    score= @high_scores[index]
+    menu_y += 35
+      @menu_font.draw_text("#{index + 1}. #{score}", menu_x, menu_y, 0.70, 0.70, 0.70, Gosu::Color::WHITE)
+    index += 1
+    end
+  end
+  
+
+  def load_high_scores
+    @high_scores = []
+  
+    if File.exist?("highscore.txt")
+      File.open("highscore.txt", "r") do |file|
+        file.each_line do |line|
+          @high_scores << line.to_i
+        end
+      end
+    end
+  end
+
+  def save_high_scores
+    @high_scores << @score
+    @high_scores.sort!.reverse!
+    @high_scores = @high_scores.take(10) # Limit to top 10 high scores
+    File.write("highscore.txt", @high_scores.join("\n"))
+  end
+  
+  
+
+end # end of main 
+
+
 
 # Run
 GameWindow.new.show
