@@ -2,7 +2,6 @@
 
 Pixel Dodger is a simple 2D game built with the Gosu game development library in Ruby. In this game, you control a pixelated character and dodge incoming obstacles while trying to achieve the highest score possible.
 
-![Pixel Dodger](game_screenshot.png)
 
 ## Table of Contents
 - [Features](#features)
