@@ -72,6 +72,9 @@ class GameWindow < Gosu::Window
     end
   end
 
+  def needs_cursor?
+    false
+  end
 
 # ESCAPE = close game/window 
   def button_down(id)
