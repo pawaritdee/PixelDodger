@@ -15,8 +15,8 @@ class GameWindow < Gosu::Window
     self.caption = "Pixel Dodger"
 
 # Game related stuff
-    @character_x = WIDTH / 2 - CHARACTER_SIZE / 2       # Character's X
-    @character_y = HEIGHT - CHARACTER_SIZE - TILE_SIZE  # Character's Y
+    @character_x = (WIDTH / 2) - (CHARACTER_SIZE / 2)       # Character's X - align center
+    @character_y = HEIGHT - CHARACTER_SIZE - TILE_SIZE  # Character's Y - align center
     @score = 0           # Initial Score  
     @level = 1           # Initial Level
     @obstacles = []      # Obstacles array
@@ -26,7 +26,7 @@ class GameWindow < Gosu::Window
     @game_name_font = Gosu::Font.new(self, "fonts/upheavtt.ttf", 48)
     @menu_font = Gosu::Font.new(self, "fonts/RetroGaming.ttf", 48)
     @background_music = Gosu::Song.new("background_music.mp3")  # BG music
-    @collision_sound = Gosu::Sample.new("fail.mp3")  # Bruh sound when player collids
+    @collision_sound = Gosu::Sample.new("fail.mp3")  # Bruh sound when player collides
     @background_music.play(true)  # Loops background music
 # Menu setup
     #@menu_font = Gosu::Font.new(48)
@@ -34,7 +34,7 @@ class GameWindow < Gosu::Window
     @selected_item = 0
     @menu_change_cooldown = 350 # 350 milliseconds = 0.35s
     @last_menu_change_time = 0
-# Flag controlling game state 
+# Controlling game state 
     @in_menu = true
     @game_over = false
     @high_score_menu = false
@@ -73,7 +73,7 @@ class GameWindow < Gosu::Window
   end
 
 
-# ESCAPE = close game 
+# ESCAPE = close game/window 
   def button_down(id)
     close if id == Gosu::KB_ESCAPE
   end
@@ -113,17 +113,19 @@ class GameWindow < Gosu::Window
       @character_x += 5
     end
 
-    move_obstacles      # call move obstacles func
+    move_obstacles      # call obstacles movement
     check_collisions    # call check collisions
     level_up if @score >= @level * LEVEL_UP_SCORE
   end
-
+    
 ## Function to moving obstacles
 ## For each obstacles, Y of obstacle is adding pixel from setting obstacle_speed
 # The moment obstacle of y reaches bottom of the screen, aka > HEIGHT
 # score is plus by 1, Move obstacle(y) back to above screen
-# Randomize new hogizon point
+# Randomize new horizon point
   def move_obstacles
+    spawn_obstacles if @obstacles.length < MAX_OBSTACLES
+
     @obstacles.each do |obstacle|
       obstacle[:y] += @obstacle_speed
       if obstacle[:y] > HEIGHT
@@ -132,13 +134,12 @@ class GameWindow < Gosu::Window
         @score += 1
       end
     end
-    spawn_obstacles if @obstacles.length < MAX_OBSTACLES
   end
 
 # Generate new obstacles under max obstacles settings
 # Random between 0 and Number of Obstacles it can fit in one horizontal line
 # Random number is then times with Tile size, (default 50px)
-# This the calculation to generate random tiles :)
+# This the calculation to generate random tiles utilizing hashes {x:, y:} :)
 # Loop UNTIL @obstacles array reaches max allowed number defined by MAX_OBSTACLES (default = 10)
   def spawn_obstacles
     @obstacles.push({ x: rand(WIDTH / TILE_SIZE) * TILE_SIZE, y: -TILE_SIZE }) until @obstacles.length == MAX_OBSTACLES
@@ -196,14 +197,14 @@ class GameWindow < Gosu::Window
 # Settings for game to start is set
   def start_game
     @in_menu = false      # not in menu anymore
-    @character_x = WIDTH / 2 - CHARACTER_SIZE / 2       # character's x redifined
+    @character_x = (WIDTH / 2) - (CHARACTER_SIZE / 2)       # character's x redifined
     @character_y = HEIGHT - CHARACTER_SIZE - TILE_SIZE # character's y redefined
     @score = 0        # Reset Score to 0
     @obstacles.clear  # Clear all obstacles
     @level = 1        # Reset level to 1
     @obstacle_speed = 5   # obstacle speed = 5
     @game_over = false    # Not gameover state
-    @background_music.play(true)  # Restart the background music
+    @background_music.play(true)  #
   end
 
   def high_score
