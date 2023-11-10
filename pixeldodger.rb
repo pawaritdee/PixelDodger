@@ -202,7 +202,7 @@ class GameWindow < Gosu::Window
     @in_menu = false      # not in menu anymore
     @character_x = (WIDTH / 2) - (CHARACTER_SIZE / 2)       # character's x redifined
     @character_y = HEIGHT - CHARACTER_SIZE - TILE_SIZE # character's y redefined
-    @score = 0        # Reset Score to 0
+    @score = 250        # Reset Score to 0
     @obstacles.clear  # Clear all obstacles
     @level = 1        # Reset level to 1
     @obstacle_speed = 5   # obstacle speed = 5
